@@ -70,6 +70,17 @@ runTest("Prediction score correctly combines all four weighted factors", () => {
 
   assert.strictEqual(score, 0.725);
 });
+runTest("PageTracker correctly calculates page transition probabilities", () => {
+  const tracker = new PageTracker();
+
+  tracker.recordAccess(1, 1);
+  tracker.recordAccess(2, 2);
+  tracker.recordAccess(1, 3);
+
+  assert.strictEqual(tracker.getTransitionProbability(1, 2), 1);
+  assert.strictEqual(tracker.getTransitionProbability(2, 1), 1);
+  assert.strictEqual(tracker.getTransitionProbability(3, 1), 0);
+});
 console.log(`\n==================================================`);
 console.log(`📊 PREDICTION TEST RESULTS: ${passed}/${total} Passed (${passed === total ? "ALL PASSED ✅" : "FAILURES ❌"})`);
 console.log(`==================================================\n`);
