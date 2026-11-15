@@ -1,7 +1,7 @@
 ﻿const assert = require('assert');
 const { simulatePrediction, calculatePredictionScore, PageTracker } = require('../src/algorithms/prediction');
 const { runAllAlgorithms } = require('../src/algorithms');
-
+const { validateAndNormalizeInput } = require('../src/algorithms/validator');
 console.log("==================================================");
 console.log("🧪 RUNNING PREDICTION ENGINE DETAILED METRICS TESTS");
 console.log("==================================================\n");
@@ -80,6 +80,17 @@ runTest("PageTracker correctly calculates page transition probabilities", () => 
   assert.strictEqual(tracker.getTransitionProbability(1, 2), 1);
   assert.strictEqual(tracker.getTransitionProbability(2, 1), 1);
   assert.strictEqual(tracker.getTransitionProbability(3, 1), 0);
+});
+runTest("Validator rejects invalid cache sizes", () => {
+  const invalidSizes = [0, -1, 'abc'];
+
+  invalidSizes.forEach(size => {
+    const result = validateAndNormalizeInput(size, [1, 2, 3]);
+
+    assert.strictEqual(result.validSize, 0);
+    assert.strictEqual(result.pages.length, 0);
+    assert.ok(result.error);
+  });
 });
 console.log(`\n==================================================`);
 console.log(`📊 PREDICTION TEST RESULTS: ${passed}/${total} Passed (${passed === total ? "ALL PASSED ✅" : "FAILURES ❌"})`);
