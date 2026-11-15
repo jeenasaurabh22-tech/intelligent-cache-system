@@ -92,6 +92,23 @@ runTest("Validator rejects invalid cache sizes", () => {
     assert.ok(result.error);
   });
 });
+runTest("Cold-start page returns a prediction score of zero", () => {
+  const tracker = new PageTracker();
+
+  const score = calculatePredictionScore(99, 1, 10, tracker);
+
+  assert.strictEqual(score, 0);
+});
+runTest("Previously accessed page receives a calculated prediction score", () => {
+  const tracker = new PageTracker();
+
+  tracker.recordAccess(1, 1);
+  tracker.recordAccess(2, 2);
+
+  const score = calculatePredictionScore(1, 2, 3, tracker);
+
+  assert.ok(score > 0);
+});
 console.log(`\n==================================================`);
 console.log(`📊 PREDICTION TEST RESULTS: ${passed}/${total} Passed (${passed === total ? "ALL PASSED ✅" : "FAILURES ❌"})`);
 console.log(`==================================================\n`);

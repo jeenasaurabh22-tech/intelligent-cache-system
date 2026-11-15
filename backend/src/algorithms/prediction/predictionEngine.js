@@ -6,9 +6,14 @@ const WEIGHTS = {
 };
 
 function calculatePredictionScore(page, currentPage, currentTime, tracker) {
-  const stats = tracker.getStats(page);
+const stats = tracker.getStats(page);
 
-  const sTransition = tracker.getTransitionProbability(currentPage, page);
+// Cold-start handling: unseen pages have no prediction history.
+if (stats.frequency === 0) {
+  return 0;
+}
+
+const sTransition = tracker.getTransitionProbability(currentPage, page);
 
   const elapsedSinceAccess = Math.max(0, currentTime - stats.lastAccess);
   const sRecency = 1 / (1 + elapsedSinceAccess);
