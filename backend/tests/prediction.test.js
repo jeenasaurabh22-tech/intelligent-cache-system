@@ -59,7 +59,17 @@ runTest("simulatePrediction returns all 8 standardized performance metrics", () 
   assert.ok(res.memoryOverheadBytes > 0);
   assert.strictEqual(res.hits + res.misses, 10);
 });
+runTest("Prediction score correctly combines all four weighted factors", () => {
+  const tracker = new PageTracker();
 
+  tracker.recordAccess(1, 1);
+  tracker.recordAccess(2, 2);
+  tracker.recordAccess(1, 3);
+
+  const score = calculatePredictionScore(1, 2, 4, tracker);
+
+  assert.strictEqual(score, 0.725);
+});
 console.log(`\n==================================================`);
 console.log(`📊 PREDICTION TEST RESULTS: ${passed}/${total} Passed (${passed === total ? "ALL PASSED ✅" : "FAILURES ❌"})`);
 console.log(`==================================================\n`);
